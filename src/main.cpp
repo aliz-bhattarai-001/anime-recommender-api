@@ -12,8 +12,8 @@ int entryPoint();
 
 int main()
 {
-    //test();
-    //test2();
+//     test();
+//     test2();
     entryPoint();
     std::cin.get();
     return 0;

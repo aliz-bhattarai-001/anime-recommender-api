@@ -1,6 +1,8 @@
 #include "../include/recommender.hpp"
 #include <algorithm>
 
+
+// scoring logic is as simple as it can get here. 
 float Recommender::score(const Anime& a, const QueryParams& params) {
     float accScore = 0.0f;
 
@@ -40,6 +42,7 @@ std::vector<ScoredAnime> Recommender::rank(const std::vector<const Anime*>& filt
     auto sortingLogic = [](ScoredAnime& a, ScoredAnime& b) {
         return a.score > b.score;
     };
+
     std::sort(scoredAnimeList.begin(), scoredAnimeList.end(), sortingLogic);
     
     // Clamping the limit of scoredList to params.limit
