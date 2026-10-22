@@ -32,10 +32,10 @@ std::optional<std::string> QueryParser::validate(const QueryParams& params) {
     if (params.limit < 1 || params.limit > MAX_LIMIT) 
         return "limit must be between 1 and " + std::to_string(MAX_LIMIT);
     
-
     if (params.max_episodes < 0)
         return "Max episodes can't be negative.";
-    return "";
+
+    return std::nullopt;
 }
 
 QueryParams QueryParser::parse(const std::string& raw_query) {

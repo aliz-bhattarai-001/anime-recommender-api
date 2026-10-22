@@ -24,6 +24,12 @@ echo \>\> Max Episodes
 echo ""
 }
 
+waitingforEnter(){
+    echo -e "\nPress \'enter\' to continue... "
+    read
+}
+
+
 show_choices(){
 echo What to do?
 echo 1. Get a recommendation
@@ -47,12 +53,16 @@ echo ""
 }
 
 
-fetchRecommendations(){
-    # $0 would be itself
-    curl -G "$API_URL" \
-        --data-urlencode "genre=$1" \
-        --data-urlencode "min_rating=$2" \
-        --data-urlencode "max_episodes=$3"
+
+fetchRecommendations() {
+    local genre="$1"
+    local min_rating="$2"
+    local max_episodes="$3"
+
+    curl -G "http://localhost:8080/recommend" \
+        --data-urlencode "genre=$genre" \
+        --data-urlencode "min_rating=$min_rating" \
+        --data-urlencode "max_episodes=$max_episodes"
 }
 
 
@@ -64,8 +74,12 @@ getRecommendation(){
 
     fetchRecommendations "$genre" "$min_rating" "$max_episodes"
 
-    echo "Press \'enter\' to continue... "
-    read
+    waitingforEnter
+}
+
+checkHealth(){
+    echo "Checking Server health"
+    curl -X GET
 }
 
 
@@ -84,12 +98,15 @@ while true; do
             ;;
         2) 
             fetchRecommendations "$def_genre" "$def_rating" "$def_max_ep"
+            waitingforEnter
             ;;
         3)
             show_default
+            waitingforEnter
             ;;
         4)
             show_requirements
+            waitingforEnter
             ;;
         5)
             echo "Terminating client. See ya :)!"
@@ -97,7 +114,7 @@ while true; do
             ;;
         *)
             echo "Invalid option. Please choose between 1 & 5."
-            sleep 1
+            sleep 3
             ;;
 
     esac 
