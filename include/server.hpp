@@ -10,23 +10,20 @@
 
 #include "../vendor/httplib.h"
 
-
-class Server {
+class Server
+{
 public:
-    
-    explicit Server(const std::vector<Anime>& data);
+    explicit Server(const std::vector<Anime> &data);
 
-    void listen(const std::string& host, int port);
+    void listen(const std::string &host, int port);
 
 private:
-    
     void registerRoutes();
 
-    
-    void handleHealth(const httplib::Request& req, httplib::Response& res);
-    void handleRecommend(const httplib::Request& req, httplib::Response& res);
+    void handleHealth(const httplib::Request &req, httplib::Response &res);
+    void handleRecommend(const httplib::Request &req, httplib::Response &res);
 
-   // shared by all functions...
-    const std::vector<Anime>& data_; 
-    httplib::Server svr_; 
+    // shared by all functions...
+    const std::vector<Anime> &data_;
+    httplib::Server svr_;
 };

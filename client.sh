@@ -18,18 +18,19 @@ echo
 
 show_requirements(){
 echo Recommendation Requires:
-echo \>\> Genre
-echo \>\> Min Rating \(0-10\)
-echo \>\> Max Episodes
+echo -e \>\> Genre
+echo -e \>\> Min Rating \(0-10\)
+echo -e \>\> Max Episodes
 echo ""
 }
 
+# simply a wait for enter 
 waitingforEnter(){
     echo -e "\nPress \'enter\' to continue... "
     read
 }
 
-
+# to show choices
 show_choices(){
 echo What to do?
 echo 1. Get a recommendation
@@ -41,14 +42,14 @@ echo ""
  }
 
 
-
+# to show def values for each
 show_default(){
 echo Default values:
-echo \>\> Genre: \"$def_genre\"
-echo \>\> Min Rating : \"$def_rating\"
-echo \>\> Max Episodes: \"$def_max_ep\"
+echo -e \>\> Genre: \"$def_genre\"
+echo -e \>\> Min Rating : \"$def_rating\"
+echo -e \>\> Max Episodes: \"$def_max_ep\"
 
-echo Note: Max episodes = 0 signifies -\> no limit is set.
+echo -e Note: Max episodes = 0 signifies -\> no limit is set.
 echo ""
 }
 

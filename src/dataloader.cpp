@@ -1,8 +1,8 @@
 #include "../include/dataloader.hpp"
 #include "../include/logging.hpp"
 #include <algorithm> // Required for std::transform
-#include <cctype> // Req for std::tolower
-#include <sstream> // Req for std::stringstream
+#include <cctype>    // Req for std::tolower
+#include <sstream>   // Req for std::stringstream
 
 #define MAX_LIMIT 10000
 
@@ -16,48 +16,52 @@ std::string Helpers::trim(std::string s)
     size_t start = s.find_first_not_of(WHITESPACE);
 
     if (start == std::string::npos)
-        return ""; 
+        return "";
     // npos (-1) : no position found.
     // if the entire string is composed of whitespace chars.
     // return an empty string.
 
     size_t end = s.find_last_not_of(WHITESPACE);
-    int new_length = end - start + 1; // the total characters
-    return s.substr(start, new_length); //2nd arg = count of chars
+    int new_length = end - start + 1;   // the total characters
+    return s.substr(start, new_length); // 2nd arg = count of chars
 }
 
-
-// since & reference is not passed 
+// since & reference is not passed
 // it does not modify the original string but returns a copy
-std::string Helpers::toLower(std::string s) {
+std::string Helpers::toLower(std::string s)
+{
 
     // a lamda function to pass in as rule to transform func
     // tells the transform func on how exactly to transform the data.
-    auto toLowerChar = [](unsigned char c) { 
-        return static_cast<unsigned char>(std::tolower(c)); 
-        };
+    auto toLowerChar = [](unsigned char c)
+    {
+        return static_cast<unsigned char>(std::tolower(c));
+    };
 
-    // args: start, end, where to write (postion) 
+    // args: start, end, where to write (postion)
     // -> s.begin() in 3rd arg:  just means write in that same string
-    std::transform(s.begin(), s.end(), s.begin(),toLowerChar);
+    std::transform(s.begin(), s.end(), s.begin(), toLowerChar);
     return s;
 }
 
-
-std::vector<std::string> Helpers::splitFields(const std::string& line)
+std::vector<std::string> Helpers::splitFields(const std::string &line)
 {
     std::vector<std::string> data;
-    std::string currentValue ; 
-    // initializes by default constructor to an empty string 
+    std::string currentValue;
+    // initializes by default constructor to an empty string
     bool isInsideQuotes = false;
 
-    for (char ch : line) {
+    for (char ch : line)
+    {
         if (ch == '"') // works as toggle for " " as well as skips their addition.
             isInsideQuotes = !isInsideQuotes;
-        else if (ch == ',' && !isInsideQuotes) {
-           data.push_back(trim(currentValue));
+        else if (ch == ',' && !isInsideQuotes)
+        {
+            data.push_back(trim(currentValue));
             currentValue.clear(); // clears the currentValue Buffer
-        } else {
+        }
+        else
+        {
             currentValue += ch;
         }
     }
@@ -66,28 +70,27 @@ std::vector<std::string> Helpers::splitFields(const std::string& line)
     // so to push it back.
     data.push_back(trim(currentValue));
     return data;
-
 }
 
-
 /*
-INDEX -> FIELD 
+INDEX -> FIELD
 
 0 -> "name" (title)
-1 -> "genre" 
+1 -> "genre"
 2 -> "type"
 3 -> "episodes"
 4 -> "rating"
 
 */
-std::vector<int> DataLoader::mapHeaders(const std::string& header_line)
+std::vector<int> DataLoader::mapHeaders(const std::string &header_line)
 {
     std::vector<std::string> fields = Helpers::splitFields(header_line);
 
     // initializing a vector of size 5 with each initialized to -1.
     // initializing to -1 makes it easier to check if the vector is -1 (not filled yet).
     std::vector<int> column_map(5, -1);
-    for (int i = 0; i < fields.size(); i++) {
+    for (int i = 0; i < fields.size(); i++)
+    {
         std::string name = Helpers::toLower(Helpers::trim(fields[i]));
 
         if (name == "name")
@@ -102,10 +105,11 @@ std::vector<int> DataLoader::mapHeaders(const std::string& header_line)
             column_map[4] = i;
     }
 
-
-    const char* fieldNames[] = { "name", "genres", "type", "episodes", "rating" };
-    for (int i = 0; i < 5; i++) {
-        if (column_map[i] == -1) { // if not replaced from its initialized (-1) : not found
+    const char *fieldNames[] = {"name", "genres", "type", "episodes", "rating"};
+    for (int i = 0; i < 5; i++)
+    {
+        if (column_map[i] == -1)
+        { // if not replaced from its initialized (-1) : not found
             throw std::runtime_error(
                 std::string("Missing Required column: ") + fieldNames[i]);
         }
@@ -113,14 +117,14 @@ std::vector<int> DataLoader::mapHeaders(const std::string& header_line)
     return column_map;
 }
 
-
-std::vector<std::string> DataLoader::parseGenres(const std::string& raw)
+std::vector<std::string> DataLoader::parseGenres(const std::string &raw)
 {
     std::vector<std::string> data;
     std::stringstream ss(raw);
     std::string value;
 
-    while (std::getline(ss, value, ',')) {
+    while (std::getline(ss, value, ','))
+    {
         std::string genre = Helpers::toLower(Helpers::trim(value));
         if (!genre.empty())
             data.push_back(genre);
@@ -129,9 +133,8 @@ std::vector<std::string> DataLoader::parseGenres(const std::string& raw)
     return data;
 }
 
-
-
-AnimeType DataLoader::parseType(const std::string& raw) {
+AnimeType DataLoader::parseType(const std::string &raw)
+{
     std::string type = Helpers::toLower(Helpers::trim(raw));
 
     if (type == "tv")
@@ -144,17 +147,15 @@ AnimeType DataLoader::parseType(const std::string& raw) {
         return AnimeType::Special;
     else
         return AnimeType::Unknowned;
-
 }
 
-
-
-std::optional<Anime> DataLoader::parseRow(const std::string& line, const std::vector<int>& column_map)
+std::optional<Anime> DataLoader::parseRow(const std::string &line, const std::vector<int> &column_map)
 {
     std::vector<std::string> fields = Helpers::splitFields(line);
-    
+
     int maxIndex = *std::max_element(column_map.begin(), column_map.end());
-    if ((int)fields.size() <= maxIndex) {
+    if ((int)fields.size() <= maxIndex)
+    {
         return std::nullopt;
     }
 
@@ -171,31 +172,37 @@ std::optional<Anime> DataLoader::parseRow(const std::string& line, const std::ve
         return std::nullopt;
 
     anime.type = parseType(fields[column_map[2]]);
-    //no need for empty checking : "Unknowned" type -> in case of absence
+    // no need for empty checking : "Unknowned" type -> in case of absence
 
-     try {
+    try
+    {
         anime.episodes = std::stoi(fields[column_map[3]]);
-    } catch (const std::exception&) {
+    }
+    catch (const std::exception &)
+    {
         anime.episodes = 0;
     }
 
     // rating — blank or non-numeric -> Skip that row.
-    try {
+    try
+    {
         anime.rating = std::stof(fields[column_map[4]]);
-    } catch (const std::exception&) {
+    }
+    catch (const std::exception &)
+    {
         return std::nullopt;
     }
 
     return anime;
 }
 
-
-
-std::vector<Anime> DataLoader::load(const std::string& path) {
+std::vector<Anime> DataLoader::load(const std::string &path)
+{
     // opening file for reading.
     std::ifstream thefile(path.c_str());
 
-    if (!thefile.is_open()) {
+    if (!thefile.is_open())
+    {
         logger.message("Could Not Open File.", Log::Loglevel::Error);
         throw std::runtime_error("Critical Error: Could not open " + path);
     }
@@ -203,17 +210,19 @@ std::vector<Anime> DataLoader::load(const std::string& path) {
     std::vector<Anime> datalist;
     std::string line;
 
-    if (!std::getline(thefile, line)) {
+    if (!std::getline(thefile, line))
+    {
         throw std::runtime_error("File is empty: " + path);
     }
-    
+
     // header row : mapping
     std::vector<int> col_map = mapHeaders(line);
-    
+
     int skipped = 0;
     int count = 0;
 
-    while (std::getline(thefile, line) && count != MAX_LIMIT) {
+    while (std::getline(thefile, line) && count != MAX_LIMIT)
+    {
         if (line.empty())
             continue;
         std::optional<Anime> result = parseRow(line, col_map);
@@ -229,8 +238,3 @@ std::vector<Anime> DataLoader::load(const std::string& path) {
     logger.message(message.c_str(), Log::Loglevel::App);
     return datalist;
 }
-
-
-
-
-

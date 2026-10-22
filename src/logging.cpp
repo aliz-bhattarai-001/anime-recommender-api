@@ -6,36 +6,36 @@
 
 // Helper Functions:
 
-void Log::Println(const char* text)
+void Log::Println(const char *text)
 {
-    std::cout << text << std ::endl;
+    std::cout << text << std::endl;
 }
 
-void Log::Print(const char* text)
+void Log::Print(const char *text)
 {
     std::cout << text;
 }
 
 // Class Constuctor & Destructor
 
-Log::Log() { }
+Log::Log() {}
 
-Log::Log(const char* message)
+Log::Log(const char *message)
 {
     Println(message);
 }
 
-Log::~Log() { }
+Log::~Log() {}
 
 // Methods available in Log class
 
-void Log::enumerate(int n, const char* item)
+void Log::enumerate(int n, const char *item)
 {
     std::cout << "(" << n << ") " << item << std::endl;
     return;
 }
 
-void Log::heading(const char* title)
+void Log::heading(const char *title)
 {
     std::cout << "========================================" << std::endl;
     std::cout << "\t" << title << std::endl;
@@ -62,12 +62,13 @@ void Log::heading(const char* title)
 //    Println(combined.c_str());
 //}
 
-void Log::message(const char* message, Loglevel level)
+void Log::message(const char *message, Loglevel level)
 {
     std::string prefix;
-    const char* color = Color::Reset;
+    const char *color = Color::Reset;
 
-    switch (level) {
+    switch (level)
+    {
     case Loglevel::Warning:
         prefix = "[Warning]: ";
         color = Color::Yellow;
@@ -100,12 +101,11 @@ void Log::message(const char* message, Loglevel level)
 
 void Log::help()
 {
-    const char* methods[] = {
+    const char *methods[] = {
         "void enumerate(int n, const char* item) -> use within for loops \n  Usage: log.enumerate(i, element);",
         "void heading(const char* title) -> for title cards: \n  Usage: log.heading(\"Title\");",
         "void message(const char* message, int type) -> for different level messages: \n  Usage: log.message(\"System Failure\", Log::Error);",
-        "void help() -> for showing this help message: \n  Usage: log.help();"
-    };
+        "void help() -> for showing this help message: \n  Usage: log.help();"};
 
     heading("LOG CLASS HELP");
     std::cout << "\n";
@@ -113,7 +113,8 @@ void Log::help()
     // calculating the total elements in the array
     int count = sizeof(methods) / sizeof(methods[0]);
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         enumerate(i + 1, methods[i]); // using enumearte to display the list
         std::cout << "---" << std::endl;
     }
